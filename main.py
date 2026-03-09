@@ -1,133 +1,35 @@
-import json
-import os
 
-FILE_NAME = "tasks.json"
+from file_manager import load_tasks
+from task_manager import add_task, list_tasks, mark_complete, delete_task
 
-tasks = []
-
-
-class Task:
-    def __init__(self, task_id, title, description, status="Pending"):
-        self.id = task_id
-        self.title = title
-        self.description = description
-        self.status = status
+tasks = load_tasks()
 
 
-def load_tasks():
-    global tasks
-
-    if os.path.exists(FILE_NAME):
-        with open(FILE_NAME, "r") as f:
-            data = json.load(f)
-
-            tasks = []
-            for item in data:
-                tasks.append(Task(
-                    item["id"],
-                    item["title"],
-                    item["description"],
-                    item["status"]
-                ))
-
-
-def save_tasks():
-    data = []
-    for task in tasks:
-        data.append(task.__dict__)
-
-    with open(FILE_NAME, "w") as f:
-        json.dump(data, f)
-
-
-def generate_id():
-    if len(tasks) == 0:
-        return 1
-    return tasks[-1].id + 1
-
-
-def add_task():
-    title = input("Enter title: ")
-    description = input("Enter description: ")
-
-    task = Task(generate_id(), title, description, "Pending")
-    tasks.append(task)
-
-    save_tasks()
-    print("Task added")
-
-
-def list_tasks():
-    if len(tasks) == 0:
-        print("No tasks")
-        return
-
-    for task in tasks:
-        print(task.id, task.title, "-", task.status)
-
-
-def mark_complete():
-    list_tasks()
-
-    try:
-        task_id = int(input("Enter task id: "))
-    except:
-        print("Invalid input")
-        return
-
-    for task in tasks:
-        if task.id == task_id:
-            task.status = "Completed"
-            save_tasks()
-            print("Task completed")
-            return
-
-    print("Task not found")
-
-
-def delete_task():
-    list_tasks()
-
-    try:
-        task_id = int(input("Enter id to delete: "))
-    except:
-        print("Invalid input")
-        return
-
-    for i in range(len(tasks)):
-        if tasks[i].id == task_id:
-            del tasks[i]
-            save_tasks()
-            print("Task deleted")
-            return
-
-    print("Task not found")
-
-
-def menu():
+def menu() -> None:
+    """Main application loop with menu."""
     while True:
-        print("\nTask Manager")
-        print("1 Add task")
-        print("2 List tasks")
-        print("3 Complete task")
-        print("4 Delete task")
-        print("0 Exit")
-
-        choice = input("Choose: ")
+        print("\n=== Task Manager ===")
+        print("1. Add task")
+        print("2. List tasks")
+        print("3. Complete task")
+        print("4. Delete task")
+        print("0. Exit")
+        choice = input("Choose option: ").strip()
 
         if choice == "1":
-            add_task()
+            add_task(tasks)
         elif choice == "2":
-            list_tasks()
+            list_tasks(tasks)
         elif choice == "3":
-            mark_complete()
+            mark_complete(tasks)
         elif choice == "4":
-            delete_task()
+            delete_task(tasks)
         elif choice == "0":
+            print("Goodbye!")
             break
         else:
-            print("Invalid choice")
+            print("Invalid choice, try again.")
 
 
-load_tasks()
-menu()
+if __name__ == "__main__":
+    menu()
