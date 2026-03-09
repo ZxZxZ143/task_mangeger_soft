@@ -25,11 +25,39 @@ def add_task():
     print("Task added")
 
 
+def list_tasks():
+    if len(tasks) == 0:
+        print("No tasks")
+        return
+
+    for task in tasks:
+        print(task.id, task.title, "-", task.status)
+
+
+def mark_complete():
+    list_tasks()
+
+    try:
+        task_id = int(input("Enter task id: "))
+    except:
+        print("Invalid input")
+        return
+
+    for task in tasks:
+        if task.id == task_id:
+            task.status = "Completed"
+            print("Task completed")
+            return
+
+    print("Task not found")
+
+
 def menu():
     while True:
         print("\nTask Manager")
         print("1 Add task")
         print("2 List tasks")
+        print("3 Complete task")
         print("0 Exit")
 
         choice = input("Choose: ")
@@ -37,7 +65,9 @@ def menu():
         if choice == "1":
             add_task()
         elif choice == "2":
-            print("List tasks not implemented yet")
+            list_tasks()
+        elif choice == "3":
+            mark_complete()
         elif choice == "0":
             break
         else:
