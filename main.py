@@ -1,4 +1,5 @@
 import json
+import os
 
 FILE_NAME = "tasks.json"
 
@@ -11,6 +12,23 @@ class Task:
         self.title = title
         self.description = description
         self.status = status
+
+
+def load_tasks():
+    global tasks
+
+    if os.path.exists(FILE_NAME):
+        with open(FILE_NAME, "r") as f:
+            data = json.load(f)
+
+            tasks = []
+            for item in data:
+                tasks.append(Task(
+                    item["id"],
+                    item["title"],
+                    item["description"],
+                    item["status"]
+                ))
 
 
 def save_tasks():
@@ -111,4 +129,5 @@ def menu():
             print("Invalid choice")
 
 
+load_tasks()
 menu()
